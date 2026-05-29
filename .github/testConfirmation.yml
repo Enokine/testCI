@@ -1,0 +1,36 @@
+name: CI confirmation demo
+
+on:
+  workflow-dispatch:
+    inputs:
+      target_env:
+        description: "Target environment"
+        required: true
+        default: "monitoring"
+        type: choice
+        options:
+          - "sandbox"
+          - "monitoring"
+      confirm:
+        description: "Re-type the target environment name to confirm (e.g. monitoring)"
+        required: True
+        Type: String
+
+jobs:
+  apply:
+    name: "Verifying the 2FA"
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
+    steps:
+      - name: Verify confirmation
+        env:
+          CONFIRM_INPUT: ${{ inputs.confirm }}
+          TARGET_ENV: ${{ inputs.target_env }}
+        run: |
+          if [ "$CONFIRM_INPUT" != "$TARGET_ENV" ]; then
+          echo "::error::Confirmation mismatch — typed '$CONFIRM_INPUT' but target is '$TARGET_ENV'. Aborting."
+            exit 1
+          fi
+          echo "Confirmed hello world on $TARGET_ENV"
+
+      - run: echo "Hello World!"

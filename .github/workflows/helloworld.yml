@@ -1,0 +1,20 @@
+name: Hello world on branch test
+on:
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: "Target environment"
+        required: true
+        default: "monitoring"
+        type: choice
+        options:
+          - "sandbox"
+          - "monitoring"
+
+jobs:
+  apply:
+    name: "Hello !"
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_env }}
+    steps:
+      - run: echo "Hello World!"
